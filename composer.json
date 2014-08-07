@@ -1,0 +1,55 @@
+{
+    "authors": [
+        {
+            "name": "Patrick Joseluis Laso",
+            "email": "wld1373@gmail.com",
+            "homepage": "http://www.patricklaso.com",
+            "role": "Developer"
+        }
+    ],
+    "name": "jlaso/pingpongserver",
+    "description": "Sample to illustrate App development with Titanium Appcelerator and connection with a PHP backend",
+    "autoload": {
+        "psr-0": {
+
+            "lib":                            "",
+
+            "app\\config":                    "",
+            "app\\command":                   "",
+            "app\\models\\core":              "",
+            "app\\models\\core\\Form":        "",
+            "app\\models\\core\\Pagination":  "",
+            "app\\models\\core\\Search":      "",
+            "app\\models\\Entity":            "",
+            "Entity":                         "app/models/",
+            "Security":                       "app/models/",
+
+            "app\\controller\\api-rest":      "",
+            "Router":                         "app/controller/core/"
+
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php assets_install"
+        ],
+        "post-update-cmd": [
+            "php assets_install"
+        ]
+    },
+    "require": {
+        "php":              ">=5.3.0",
+        "slim/slim":        "2.2.0",
+        "slim/extras":      "2.*",
+        "twig/twig":        "1.13.1",
+        "j4mie/paris" :     "1.2.0",
+        "symfony/finder" :  "2.3.0",
+        "symfony/config":   "2.2.0",
+        "symfony/yaml":     "2.1.0",
+        "twbs/bootstrap":   "3.2.0"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin/"
+    }
+}

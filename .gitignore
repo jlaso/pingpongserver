@@ -1,0 +1,15 @@
+.idea
+
+app/config/dbconfig.php
+app/config/parameters.yml
+
+app/cache/*
+app/logs/*
+
+web/custom/*
+
+templates/custom/*
+
+vendor/*
+
+bin/*

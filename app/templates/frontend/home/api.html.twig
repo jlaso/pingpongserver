@@ -1,0 +1,121 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1 class="page-header">API</h1>
+
+        <div class="row placeholders">
+
+        </div>
+
+        {% set urlApi = "/api/" ~ version %}
+
+        <h2 class="sub-header">Version {{ version }}</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Method</th>
+                    <th>URL</th>
+                    <th>Params</th>
+                    <th>Result</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>version</td>
+                    <td>GET</td>
+                    <td>{{ urlApi }}/version</td>
+                    <td>NONE</td>
+                    <td><pre>{"result":true,"version":"v1"}</pre></td>
+                </tr>
+                <tr>
+                    <td>players</td>
+                    <td>GET</td>
+                    <td>{{ urlApi }}/players.json[?criteria=xxx]</td>
+                    <td>headers:<ul><li>API-KEY</li></ul></td>
+                    <td>
+                        <p>Without criteria <br/><pre>
+{
+    "result":true,
+    "players":[
+        {"id":"1","nick":"player1","email":"player1@pingpong.ns0.es"},
+        {"id":"2","nick":"player2","email":"player2@pingpong.ns0.es"},
+        {"id":"3","nick":"player3","email":"player3@pingpong.ns0.es"}
+    ]
+}</pre></p>
+                        <p>criteria=player1 <br/>
+                            <pre>
+{
+    "result":true,
+    "players":[
+        {"id":"1","nick":"player1","email":"player1@pingpong.ns0.es"}
+    ]
+}</pre>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>start-match</td>
+                    <td>PUT</td>
+                    <td>/api/v1/start-match[/to-points/{toPoints}]</td>
+                    <td>headers:<ul><li>API-KEY</li><li>PLAYER</li><li>PASSWORD</li></ul></td>
+                    <td>
+                        <p>
+                        Result OK <br/>
+                        <pre>
+{
+    "result":true,
+    "match":
+        {
+            "id":"4","player1":"1","player2":0,"created_at":"2014-08-06 11:56:17",
+            "finished_at":"","score1":0,"score2":0,"to_points":"21"
+        }
+}
+                        </pre>
+                        </p>
+                        <p>
+                        Player doesn't exists <br/>
+                        <pre>{"result":false,"error":"error.player_doesnt_exists"}</pre>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>search-match</td>
+                    <td>GET</td>
+                    <td>/api/v1/search-match[?criteria=xxx]</td>
+                    <td>headers:<ul><li>API-KEY</li><li>PLAYER</li><li>PASSWORD</li></ul></td>
+                    <td>
+                        <p>
+                        Result OK <br/>
+                        <pre>
+{
+    "result":true,
+    "matches":[
+        {
+          "id":"1","player1":"1","player2":0,"created_at":"2014-08-06 10:09:52",
+          "finished_at":"","score1":0,"score2":0,"to_points":"21"
+        },
+        {
+          "id":"2","player1":"1","player2":0,"created_at":"2014-08-06 11:25:29",
+          "finished_at":"","score1":0,"score2":0,"to_points":"21"
+        }
+    ],
+    "players":{"1":"player1"}
+}</pre>
+                        </p>
+                        <p>
+                        No matches with criteria<br/>
+                        <pre>{"result":true,"matches":[],"players":[]}</pre>
+                        </p>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock content %}

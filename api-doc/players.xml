@@ -1,0 +1,35 @@
+<RestClientRequest>
+  <option name="httpMethod" value="GET" />
+  <option name="urlBase" value="http://pingpongserver.dev" />
+  <option name="urlPath" value="/api/v1/players.json" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="API-KEY" />
+        <option name="value" value="kDjE9KfmD2Pd9KmcFkSdFqlK6Mfjz09dKdqS" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="criteria" />
+        <option name="value" value="player1" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="false" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

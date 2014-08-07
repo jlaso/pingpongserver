@@ -1,0 +1,44 @@
+{% extends "frontend/layout.html.twig" %}
+
+{% block content %}
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1 class="page-header">Hall of Fame</h1>
+
+        <div class="row placeholders">
+
+        </div>
+
+        <h2 class="sub-header">Best players</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Total score</th>
+                    <th>Number of matches</th>
+                    <th>Last match played on</th>
+                    <th>Position</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for player in players %}
+                    <tr>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.score }}</td>
+                        <td>{{ player.matches }}</td>
+                        <td>{{ player.last_match }}</td>
+                        <td>{{ player.position }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">There are no results yet!</td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+
+<?php
+
+@mkdir("./web/bootstrap");
+
+$dir = __DIR__;
+
+exec("ln -sFv {$dir}/vendor/twbs/bootstrap/dist/css {$dir}/web/bootstrap/css");
+exec("ln -sFv {$dir}/vendor/twbs/bootstrap/dist/js {$dir}/web/bootstrap/js");
+exec("ln -sFv {$dir}/vendor/twbs/bootstrap/dist/fonts {$dir}/web/bootstrap/fonts");
+
