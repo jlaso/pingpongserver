@@ -14,16 +14,23 @@ abstract class ApiController extends Controller
     const OPPONENT_SCORES = 'opponent.scores';
     const OPPONENT_WINS = 'opponent.wins';
 
+    const ERROR_PLAYER_DOESNT_EXISTS = 'error.player_doesnt_exists';
+    const ERROR_MATCH_DOESNT_EXISTS = 'error.match_doesnt_exists';
+    const ERROR_MATCH_NOT_STARTED = 'error.match_not_started';
+    const ERROR_MATCH_STARTED = 'error.match_started';
+
     protected function printJsonResponse($data = array())
     {
         $response = $this->slimInstance->response();
         $response->header('Content', 'application/json');
+        $response->header('Cache-Control', 'no-cache, must-revalidate');
+        $response->header('Expires', 'Sat, 26 Jul 1997 05:00:00 GTM');
 
         $data = array_merge(array('result'=>true), $data);
 
         $response->body(json_encode($data));
         $response->finalize();
-
+        $this->slimInstance->stop();
     }
 
     protected function printJsonError($error)
@@ -37,7 +44,7 @@ abstract class ApiController extends Controller
 
     protected function sendPushNotification($dest, $msg)
     {
-        // do
+        // to do
     }
 
     protected function checkApiKey()
@@ -58,13 +65,14 @@ abstract class ApiController extends Controller
         $nick = $request->headers('PLAYER');
 
         /** @var Player $player */
-        $player = \Entity\Player::factory()->where('nick',$nick)->find_one();
+        $player = \Entity\Player::factory()->where('nick', $nick)->find_one();
 
         if(!$player){
             $this->printJsonError(self::ERROR_PLAYER_DOESNT_EXISTS);
-        }
-        if($player->password != $request->headers('PASSWORD')){
-            $this->badCredentials();
+        }else{
+            if($player->password != $request->headers('PASSWORD')){
+                $this->badCredentials();
+            }
         }
         return $player;
     }
@@ -78,7 +86,10 @@ abstract class ApiController extends Controller
     {
         $response = $this->slimInstance->response();
         $response->status(403);
+        $response->header('HTTP/1.0 403 Forbbiden');
+        //$response->body('error 403');
         $response->finalize();
+        $this->slimInstance->stop();
     }
 
 }

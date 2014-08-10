@@ -58,6 +58,17 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>login</td>
+                    <td>POST</td>
+                    <td>{{ urlApi }}/login</td>
+                    <td>headers:<ul><li>API-KEY</li><li>PLAYER</li><li>PASSWORD</li></ul></td>
+                    <td>
+                        <p>Result OK <br/><pre>{"result":true}</pre></p>
+                        <p>User doesn't exists <br/><pre>{"result":false,"error":"error.player_doesnt_exists"}</pre></p>
+                        <p>Password mismatch <br/><pre>STATUS 403</pre></p>
+                    </td>
+                </tr>
+                <tr>
                     <td>start-match</td>
                     <td>PUT</td>
                     <td>/api/v1/start-match[/to-points/{toPoints}]</td>
@@ -109,6 +120,78 @@
                         <p>
                         No matches with criteria<br/>
                         <pre>{"result":true,"matches":[],"players":[]}</pre>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>join-match</td>
+                    <td>PUT</td>
+                    <td>/api/v1/join-match/{matchId}</td>
+                    <td>headers:<ul><li>API-KEY</li><li>PLAYER</li><li>PASSWORD</li></ul></td>
+                    <td>
+                        <p>
+                        Result OK <br/>
+                        <pre>{"result":true,"match":"1"}</pre>
+                        </p>
+                        <p>
+                        No match with this ID<br/>
+                        <pre>{"result":false,"error":"error.match_doesnt_exists"}</pre>
+                        </p>
+                        <p>
+                        Match already started<br/>
+                        <pre>{"result":false,"error":"error.match_started"}</pre>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>claim-point</td>
+                    <td>PUT</td>
+                    <td>/api/v1/claim-match/{matchId}</td>
+                    <td>headers:<ul><li>API-KEY</li><li>PLAYER</li><li>PASSWORD</li></ul></td>
+                    <td>
+                        <p>
+                        Result OK<br/>
+                        <pre>
+{
+    "result":true,
+    "match":
+       {
+        "id":"1",
+        "player1":"2",
+        "player2":"1",
+        "created_at":"2014-08-06 10:09:52",
+        "finished_at":"",
+        "score1":0,
+        "score2":1,
+        "to_points":21
+       }
+}</pre>
+                        </p>
+                        <p>
+                        Result OK and is the last point<br/>
+                        <pre>
+{
+    "result":true,
+    "match":
+       {
+        "id":"1",
+        "player1":"2",
+        "player2":"1",
+        "created_at":"2014-08-06 10:09:52",
+        "finished_at":"2014-08-06 10:59:34",
+        "score1":18,
+        "score2":21,
+        "to_points":21
+       }
+}</pre>
+                        </p>
+                        <p>
+                        No match with this ID<br/>
+                        <pre>{"result":false,"error":"error.match_doesnt_exists"}</pre>
+                        </p>
+                        <p>
+                        Match not started yet<br/>
+                        <pre>{"result":false,"error":"error.match_not_started"}</pre>
                         </p>
                     </td>
                 </tr>

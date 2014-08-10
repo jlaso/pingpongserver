@@ -52,7 +52,7 @@ EOD;
             'finished_at' => $this->finished_at ?: "",
             'score1'      => $this->score1 ?: 0,
             'score2'      => $this->score2 ?: 0,
-            'to_points'   => $this->to_points ?: 0,
+            'to_points'   => $this->to_points ? intval($this->to_points) : 0,
         );
     }
 

@@ -5,10 +5,6 @@ use Router\ApiController;
 class ApiV1Controller extends ApiController
 {
 
-    const ERROR_PLAYER_DOESNT_EXISTS = 'error.player_doesnt_exists';
-    const ERROR_MATCH_DOESNT_EXISTS = 'error.match_doesnt_exists';
-    const ERROR_MATCH_NOT_STARTED = 'error.match_not_started';
-
     /**
      * @Route('/api/v1/version')
      * @Name('api.v1.version')
@@ -43,6 +39,19 @@ class ApiV1Controller extends ApiController
     }
 
     /**
+     * @Route('/api/v1/login')
+     * @Name('api.v1.login')
+     * @Method('POST')
+     */
+    public function loginAction()
+    {
+        $this->checkApiKey();
+        $player = $this->getUserAndCheckPassword();
+
+        $this->printJsonResponse();
+    }
+
+    /**
      * @Route('/api/v1/start-match')
      * @Name('api.v1.start-match')
      * @Method('PUT')
@@ -53,6 +62,19 @@ class ApiV1Controller extends ApiController
         $player = $this->getUserAndCheckPassword();
 
         $toPoints = $this->slimInstance->request()->get('toPoints') ?: 21;
+
+        /** @var \Entity\Match[] $matches */
+        $matches = \Entity\Match::factory()
+            ->where('player1', $player->id)
+            ->where_null('player2')
+            ->where_null('finished_at')
+            ->find_many();
+
+        if(count($matches)){
+            foreach($matches as $match){
+                $match->delete();
+            }
+        }
 
         /** @var \Entity\Match $match */
         $match = \Entity\Match::factory()->create();
@@ -111,22 +133,22 @@ class ApiV1Controller extends ApiController
     }
 
     /**
-     * @Route('/api/v1/join-match/:matchId/:nick')
+     * @Route('/api/v1/join-match/:matchId')
      * @Name('api.v1.join-match')
      * @Method('PUT')
      */
-    public function playerJoinMatchAction($matchId, $nick)
+    public function playerJoinMatchAction($matchId)
     {
         $this->checkApiKey();
 
+        /** @var \Entity\Match $match */
         $match = \Entity\Match::factory()->find_one($matchId);
-        /** @var Player $player */
-        $player = \Entity\Player::factory()->where('nick',$nick)->find_one();
+        $player = $this->getUserAndCheckPassword();
 
-        if(!$player){
-            $this->printJsonError(self::ERROR_PLAYER_DOESNT_EXISTS);
-        }elseif(!$match){
+        if(!$match){
             $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
+        }elseif($match->started()){
+            $this->printJsonError(self::ERROR_MATCH_STARTED);
         }else{
 
             $match->player2 = $player->id;
@@ -139,17 +161,16 @@ class ApiV1Controller extends ApiController
     }
 
     /**
-     * @Route('/api/v1/claim-point/:matchId/:nick')
+     * @Route('/api/v1/claim-point/:matchId')
      * @Name('api.v1.claim-point')
      * @Method('PUT')
      */
-    public function playerClaimPointAction($matchId, $nick)
+    public function playerClaimPointAction($matchId)
     {
         $this->checkApiKey();
 
         $match = \Entity\Match::factory()->find_one($matchId);
-        /** @var Player $player */
-        $player = \Entity\Player::factory()->where('nick',$nick)->find_one();
+        $player = $this->getUserAndCheckPassword();
 
         switch(true){
             
@@ -168,7 +189,7 @@ class ApiV1Controller extends ApiController
             case ($player->id == $match->player1):
 
                 $match->score1++;
-                if($match->toPoints > $match->score1){
+                if($match->to_points > $match->score1){
                     $this->sendPushNotification($match->player1, self::OPPONENT_SCORES, json_encode($match->score()));
                 }else{                    
                     $this->sendPushNotification($match->player1, self::OPPONENT_WINS, json_encode($match->score()));
@@ -181,7 +202,7 @@ class ApiV1Controller extends ApiController
             case ($player->id == $match->player2):
 
                 $match->score2++;
-                if($match->toPoints > $match->score2){
+                if($match->to_points > $match->score2){
                     $this->sendPushNotification($match->player2, self::OPPONENT_SCORES, json_encode($match->score()));
                 }else{
                     $this->sendPushNotification($match->player2, self::OPPONENT_WINS, json_encode($match->score()));

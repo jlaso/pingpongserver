@@ -42,19 +42,19 @@ class PlayerFixture implements FixturableInterface
                 array(
                     'nick'      => 'player1',
                     'email'     => 'player1@pingpong.ns0.es',
-                    'password'  =>  md5('1234'),
+                    'password'  =>  sha1('1234'),
                 )
             )->addNewItem(
                 array(
                     'nick'      => 'player2',
                     'email'     => 'player2@pingpong.ns0.es',
-                    'password'  =>  md5('5678'),
+                    'password'  =>  sha1('5678'),
                 )
             )->addNewItem(
                 array(
                     'nick'      => 'player3',
                     'email'     => 'player3@pingpong.ns0.es',
-                    'password'  =>  md5('9012'),
+                    'password'  =>  sha1('9012'),
                 )
             )
         ;
