@@ -1,6 +1,6 @@
 <?php
 
-use Router\Controller;
+use JLaso\SlimRoutingManager\Controller\Controller;
 
 class FrontendController extends Controller
 {

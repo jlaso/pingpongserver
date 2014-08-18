@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c514fbd8bd2e426b383aeb128a471b09",
+    "hash": "352c1a0556e8f3fa89c7b833f0a711f0",
     "packages": [
         {
             "name": "j4mie/idiorm",
@@ -123,6 +123,50 @@
                 "paris"
             ],
             "time": "2012-11-14 16:58:08"
+        },
+        {
+            "name": "jlaso/slim-routing-manager",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jlaso/slim-routing-manager.git",
+                "reference": "5d5112fd8b83917a81486c20682b1795caed9879"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jlaso/slim-routing-manager/zipball/5d5112fd8b83917a81486c20682b1795caed9879",
+                "reference": "5d5112fd8b83917a81486c20682b1795caed9879",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "slim/slim": "2.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "JLaso\\SlimRoutingManager": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Patrick JL Laso",
+                    "email": "wld1373@gmail.com",
+                    "homepage": "http://www.patricklaso.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "An approximation to the Symfony's routing system in SlimFramework",
+            "homepage": "http://github.com/jlaso/slim-routing-manager",
+            "keywords": [
+                "router",
+                "slimframework"
+            ],
+            "time": "2014-08-16 16:28:21"
         },
         {
             "name": "slim/extras",

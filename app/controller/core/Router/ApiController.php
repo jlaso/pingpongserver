@@ -2,6 +2,7 @@
 
 namespace Router;
 
+use JLaso\SlimRoutingManager\Controller\Controller;
 use \Slim\Slim;
 use Entity\Player;
 

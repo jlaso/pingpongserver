@@ -46,7 +46,8 @@
         "symfony/finder" :  "2.3.0",
         "symfony/config":   "2.2.0",
         "symfony/yaml":     "2.1.0",
-        "twbs/bootstrap":   "3.2.0"
+        "twbs/bootstrap":   "3.2.0",
+        "jlaso/slim-routing-manager": "*"
     },
     "minimum-stability": "dev",
     "config": {

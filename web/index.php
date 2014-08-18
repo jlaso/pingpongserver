@@ -43,8 +43,15 @@ $languages = app\config\Config::getInstance()->getLanguageCodes();
     'lang' => implode('|', $languages)
 ));
 
-// Define routes for controller
-require_once ROOT_DIR . '/app/controller/autoload.php';
+new \JLaso\SlimRoutingManager\RoutingCacheManager(
+    array(
+        'cache'      => __DIR__ . '/../app/cache/routing',
+        'controller' => array(
+            __DIR__ . '/../app/controller/api-rest',
+            __DIR__ . '/../app/controller/frontend',
+        ),
+    )
+);
 
 // Run app
 $app->run();

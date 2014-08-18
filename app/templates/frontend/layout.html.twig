@@ -48,6 +48,11 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/dist/PingPongCounter.apk">
+                        <img src="/img/apk-big.png" alt="apk" width="60px" height="24px"/>
+                    </a>
+                </li>
                 <li><a href="{{ urlFor('home.index') }}">Dashboard</a></li>
             </ul>
             {#<form class="navbar-form navbar-right">#}
@@ -68,6 +73,11 @@
                 <li class="{{ section == "home.index" ? "active" : "" }}"><a href="{{ urlFor("home.index", {"version":"v1"}) }}">Overview</a></li>
                 <li class="{{ section == "home.hall_fame" ? "active" : "" }}"><a href="{{ urlFor("home.hall_fame", {"version":"v1"}) }}">Hall of fame</a></li>
                 <li class="{{ section == "home.api" ? "active" : "" }}"><a href="{{ urlFor("home.api", {"version":"v1"}) }}">API</a></li>
+                {#<li>
+                    <a href="/dist/PingPongCounter.apk">
+                        <img src="/img/apk-big.png" alt="apk" width="100%"/>
+                    </a>
+                </li>#}
             </ul>
 
         </div>
