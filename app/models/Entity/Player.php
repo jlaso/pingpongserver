@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS `{$class}` (
   `password` char(40) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `hash` char(40) DEFAULT NULL,
+  `cloud_id` char(50) DEFAULT NULL,
+  `match_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE={$options['engine']} AUTO_INCREMENT=1 DEFAULT CHARSET={$options['charset']};
 

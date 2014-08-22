@@ -11,14 +11,16 @@ abstract class ApiController extends Controller
 
     const API_KEY = 'kDjE9KfmD2Pd9KmcFkSdFqlK6Mfjz09dKdqS';
 
-    const PLAYER_JOINED = 'player.joined';
+    const PLAYER_JOINED   = 'player.joined';
     const OPPONENT_SCORES = 'opponent.scores';
-    const OPPONENT_WINS = 'opponent.wins';
+    const OPPONENT_WINS   = 'opponent.wins';
 
-    const ERROR_PLAYER_DOESNT_EXISTS = 'error.player_doesnt_exists';
-    const ERROR_MATCH_DOESNT_EXISTS = 'error.match_doesnt_exists';
-    const ERROR_MATCH_NOT_STARTED = 'error.match_not_started';
-    const ERROR_MATCH_STARTED = 'error.match_started';
+    const ERROR_PLAYER_DOESNT_EXISTS   = 'error.player_doesnt_exists';
+    const ERROR_MATCH_DOESNT_EXISTS    = 'error.match_doesnt_exists';
+    const ERROR_MATCH_NOT_STARTED      = 'error.match_not_started';
+    const ERROR_PLAYER_NOT_PLAYING     = 'error.player_not_playing';
+    const ERROR_MATCH_STARTED          = 'error.match_started';
+    const ERROR_CLOUD_ID_NOT_SPECIFIED = 'error.cloud_id_not_specified';
 
     protected function printJsonResponse($data = array())
     {

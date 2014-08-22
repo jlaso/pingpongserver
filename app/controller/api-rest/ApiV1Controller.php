@@ -48,6 +48,28 @@ class ApiV1Controller extends ApiController
         $this->checkApiKey();
         $player = $this->getUserAndCheckPassword();
 
+        $this->printJsonResponse(array('cloudId'=>$player->cloud_id));
+    }
+
+    /**
+     * @Route('/api/v1/set-cloud-id')
+     * @Name('api.v1.set-cloud-id')
+     * @Method('POST')
+     */
+    public function setCloudIdAction()
+    {
+        $this->checkApiKey();
+        $player = $this->getUserAndCheckPassword();
+
+        $cloudId = $this->slimInstance->request()->get('cloudId') ?: 0;
+
+        if(!$cloudId){
+            $this->printJsonError(self::ERROR_CLOUD_ID_NOT_SPECIFIED);
+        }
+
+        $player->cloud_id = $cloudId;
+        $player->save();
+
         $this->printJsonResponse();
     }
 
@@ -82,6 +104,9 @@ class ApiV1Controller extends ApiController
         $match->created_at = date("Y-m-d h:i:s");
         $match->to_points = $toPoints;
         $match->save();
+
+        $player->match_id = $match->id;
+        $player->save();
 
         $this->printJsonResponse(array('match'=>$match->asArray()));
     }
@@ -156,21 +181,25 @@ class ApiV1Controller extends ApiController
 
             $this->sendPushNotification($match->player1, self::PLAYER_JOINED);
 
+            $player->match_id = $match->id;
+            $player->save();
+
             $this->printJsonResponse(array('match'=>$match->id));
         }
     }
 
     /**
-     * @Route('/api/v1/claim-point/:matchId')
+     * @Route('/api/v1/claim-point')
      * @Name('api.v1.claim-point')
      * @Method('PUT')
      */
-    public function playerClaimPointAction($matchId)
+    public function playerClaimPointAction()
     {
         $this->checkApiKey();
 
-        $match = \Entity\Match::factory()->find_one($matchId);
         $player = $this->getUserAndCheckPassword();
+        $matchId = $player->match_id;
+        $match = \Entity\Match::factory()->find_one($matchId);
 
         switch(true){
             
@@ -178,6 +207,10 @@ class ApiV1Controller extends ApiController
                 $this->printJsonError(self::ERROR_PLAYER_DOESNT_EXISTS);
                 break;
             
+            case (!$matchId):
+                $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
+                break;
+
             case (!$match):
                 $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
                 break;
@@ -194,6 +227,8 @@ class ApiV1Controller extends ApiController
                 }else{                    
                     $this->sendPushNotification($match->player1, self::OPPONENT_WINS, json_encode($match->score()));
                     $match->finished_at = date("Y-m-d h:i:s");
+                    $player->match_id = 0;
+                    $player->save();
                 }
                 $this->printJsonResponse(array('match'=>$match->asArray()));
                 $match->save();
@@ -207,6 +242,8 @@ class ApiV1Controller extends ApiController
                 }else{
                     $this->sendPushNotification($match->player2, self::OPPONENT_WINS, json_encode($match->score()));
                     $match->finished_at = date("Y-m-d h:i:s");
+                    $player->match_id = 0;
+                    $player->save();
                 }
                 $this->printJsonResponse(array('match'=>$match->asArray()));
                 $match->save();
