@@ -214,7 +214,44 @@ class ApiV1Controller extends ApiController
             $this->printJsonError(self::ERROR_MATCH_NOT_STARTED);
         }
 
-        $this->printJsonResponse(array('match'=>$match->id));
+        $score = array();
+        /** @var \Entity\Player $opponent */
+        if($player->id == $match->player1){
+            $opponent = \Entity\Player::factory()->find_one($match->player2);
+            $score['you'] = $match->score1 ?: 0;
+            $score['other'] = $match->score2 ?: 0;
+        }else{
+            $opponent = \Entity\Player::factory()->find_one($match->player1);
+            $score['you'] = $match->score2 ?: 0;
+            $score['other'] = $match->score2 ?: 0;
+        }
+        $this->printJsonResponse(array(
+                'match'    => $match->asArray(),
+                'opponent' => $opponent->asArray(),
+                'score'    => $score,
+            )
+        );
+    }
+
+    /**
+     * @param \Entity\Player $player
+     * @param \Entity\Match $match
+     *
+     * @return array
+     */
+    protected function getScore(\Entity\Player $player, \Entity\Match $match)
+    {
+        $score = array();
+        /** @var \Entity\Player $opponent */
+        if($player->id == $match->player1){
+            $score['you'] = $match->score1 ?: 0;
+            $score['other'] = $match->score2 ?: 0;
+        }else{
+            $score['you'] = $match->score2 ?: 0;
+            $score['other'] = $match->score2 ?: 0;
+        }
+
+        return $score;
     }
 
     /**
@@ -228,7 +265,17 @@ class ApiV1Controller extends ApiController
 
         $player = $this->getUserAndCheckPassword();
         $matchId = $player->match_id;
+        if(!$matchId){
+            $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
+        }
+        /** @var \Entity\Match $match */
         $match = \Entity\Match::factory()->find_one($matchId);
+        /** @var \Entity\Player $opponent */
+        if($player->id == $match->player1){
+            $opponent = \Entity\Player::factory()->find_one($match->player2);
+        }else{
+            $opponent = \Entity\Player::factory()->find_one($match->player1);
+        }
 
         switch(true){
             
@@ -249,33 +296,43 @@ class ApiV1Controller extends ApiController
                 break;
             
             case ($player->id == $match->player1):
-
                 $match->score1++;
+                $score = $this->getScore($player, $match);
                 if($match->to_points > $match->score1){
-                    $this->sendPushNotification($match->player1, self::OPPONENT_SCORES, json_encode($match->score()));
+                    $this->sendPushNotification($opponent->cloud_id, self::NOTIF_SCORE_UPDATE, self::OPPONENT_SCORES, array('score'=>$score));
                 }else{                    
-                    $this->sendPushNotification($match->player1, self::OPPONENT_WINS, json_encode($match->score()));
+                    $this->sendPushNotification($opponent->cloud_id, self::NOTIF_OTHER_WINS, self::OPPONENT_WINS, array('score'=>$score));
                     $match->finished_at = date("Y-m-d h:i:s");
                     $player->match_id = 0;
                     $player->save();
                 }
-                $this->printJsonResponse(array('match'=>$match->asArray()));
                 $match->save();
+                $this->printJsonResponse(
+                    array(
+                        'match' => $match->asArray(),
+                        'score' => $score,
+                    )
+                );
                 break;
             
             case ($player->id == $match->player2):
-
                 $match->score2++;
+                $score = $this->getScore($player, $match);
                 if($match->to_points > $match->score2){
-                    $this->sendPushNotification($match->player2, self::OPPONENT_SCORES, json_encode($match->score()));
+                    $this->sendPushNotification($opponent->cloud_id, self::NOTIF_SCORE_UPDATE, self::OPPONENT_SCORES, array('score'=>$score));
                 }else{
-                    $this->sendPushNotification($match->player2, self::OPPONENT_WINS, json_encode($match->score()));
+                    $this->sendPushNotification($opponent->cloud_id, self::NOTIF_OTHER_WINS, self::OPPONENT_WINS, array('score'=>$score));
                     $match->finished_at = date("Y-m-d h:i:s");
                     $player->match_id = 0;
                     $player->save();
                 }
-                $this->printJsonResponse(array('match'=>$match->asArray()));
                 $match->save();
+                $this->printJsonResponse(
+                    array(
+                        'match' => $match->asArray(),
+                        'score' => $score,
+                    )
+                );
                 break;
             
             default:

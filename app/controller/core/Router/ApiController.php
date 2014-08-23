@@ -22,6 +22,11 @@ abstract class ApiController extends Controller
     const ERROR_MATCH_STARTED          = 'error.match_started';
     const ERROR_CLOUD_ID_NOT_SPECIFIED = 'error.cloud_id_not_specified';
 
+    const NOTIF_MATCH_STARTS = 1;  // An opponent has joined to your match
+    const NOTIF_YOU_WIN = 2;
+    const NOTIF_OTHER_WINS = 3;
+    const NOTIF_SCORE_UPDATE = 4;
+
     protected function printJsonResponse($data = array())
     {
         $response = $this->slimInstance->response();
@@ -45,11 +50,52 @@ abstract class ApiController extends Controller
         );
     }
 
-    protected function sendPushNotification($dest, $msg)
+
+    /**
+     * @param int|array $dest
+     * @param int $type
+     * @param $msg
+     */
+    protected function sendPushNotification($dest, $type, $msg, $data = array())
     {
-        // to do
+        $tmpFile = realpath(__DIR__ . "/../../..") . "/app/cache/cookie.txt";
+
+        $curl = curl_init('https://api.cloud.appcelerator.com/v1/users/login.json?key=' . ACS_APP_KEY);
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $tmpFile);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $tmpFile);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, array('login' => ACS_USER, 'password' => ACS_PASSWORD));
+        $void = curl_exec($curl);
+
+        $ch = curl_init('https://api.cloud.appcelerator.com/v1/push_notification/notify.json?key=' . ACS_APP_KEY);
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $tmpFile);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $tmpFile);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, array(
+                'channel' => 'notifications',
+                'to_ids'  => is_array($dest) ? implode(',', $dest) : $dest,
+                'payload' => json_encode(
+                    array_merge(
+                        array(
+                            'badge' => '+1',
+                            'type'  => $type,
+                            'sound' => 'default',
+                            'icon'  => 'appicon',
+                            'alert' => utf8_encode($msg),
+                        ),
+                        $data
+                    )
+                ),
+            )
+        );
+        $result = curl_exec($ch);
+
+        curl_close($ch);
     }
 
+    /**
+     * Checks if the credentials passed are OK
+     */
     protected function checkApiKey()
     {
         $request = $this->slimInstance->request();
