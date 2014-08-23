@@ -61,7 +61,9 @@ class ApiV1Controller extends ApiController
         $this->checkApiKey();
         $player = $this->getUserAndCheckPassword();
 
-        $cloudId = $this->slimInstance->request()->get('cloudId') ?: 0;
+        /** @var \Slim\Http\Request $request */
+        $request = $this->slimInstance->request();
+        $cloudId = $request->post('cloudId') ?: 0;
 
         if(!$cloudId){
             $this->printJsonError(self::ERROR_CLOUD_ID_NOT_SPECIFIED);
