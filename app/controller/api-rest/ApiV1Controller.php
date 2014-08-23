@@ -190,6 +190,33 @@ class ApiV1Controller extends ApiController
         }
     }
 
+
+    /**
+     * @Route('/api/v1/match-info')
+     * @Name('api.v1.match-info')
+     * @Method('GET')
+     */
+    public function matchInfoAction()
+    {
+        $this->checkApiKey();
+
+        $player = $this->getUserAndCheckPassword();
+        if(!$player->match_id){
+            $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
+        }
+
+        /** @var \Entity\Match $match */
+        $match = \Entity\Match::factory()->find_one($player->match_id);
+
+        if(!$match){
+            $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
+        }elseif(!$match->started()){
+            $this->printJsonError(self::ERROR_MATCH_NOT_STARTED);
+        }
+
+        $this->printJsonResponse(array('match'=>$match->id));
+    }
+
     /**
      * @Route('/api/v1/claim-point')
      * @Name('api.v1.claim-point')
