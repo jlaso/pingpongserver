@@ -99,7 +99,8 @@ abstract class ApiController extends Controller
         $result = curl_exec($curl);
         curl_close($curl);
 
-        print_r($result);
+        //print_r($c_opt);
+        //print_r($result);
     }
 
     /**

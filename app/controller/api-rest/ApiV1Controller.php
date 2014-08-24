@@ -171,6 +171,8 @@ class ApiV1Controller extends ApiController
         /** @var \Entity\Match $match */
         $match = \Entity\Match::factory()->find_one($matchId);
         $player = $this->getUserAndCheckPassword();
+        /** @var \Entity\Player $opponent */
+        $opponent = \Entity\Player::factory()->find_one($match->player1);
 
         if(!$match){
             $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
@@ -181,10 +183,10 @@ class ApiV1Controller extends ApiController
             $match->player2 = $player->id;
             $match->save();
 
-            $this->sendPushNotification($match->player1, self::PLAYER_JOINED);
-
             $player->match_id = $match->id;
             $player->save();
+
+            $this->sendPushNotification($opponent->cloud_id, self::NOTIF_MATCH_STARTS, self::PLAYER_JOINED, array('match' => $match->asArray()));
 
             $this->printJsonResponse(array('match'=>$match->id));
         }
