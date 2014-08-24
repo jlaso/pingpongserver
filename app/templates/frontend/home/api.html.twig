@@ -144,6 +144,48 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>match-info</td>
+                    <td>GET</td>
+                    <td>/api/v1/match-info</td>
+                    <td>headers:<ul><li>API-KEY</li><li>PLAYER</li><li>PASSWORD</li></ul></td>
+                    <td>
+                        <p>
+                        Result OK <br/>
+                        <pre>
+{
+    "result":true,
+    "match":{
+        "id":"1",
+        "player1":"1",
+        "player2":"2",
+        "created_at":"2014-08-23 01:41:36",
+        "finished_at":"",
+        "score1":"5",
+        "score2":0,
+        "to_points":21
+    },
+    "opponent":{
+        "id":"2",
+        "nick":"player2",
+        "email":"player2@pingpong.ns0.es"
+    },
+    "score":{
+        "you":"5",
+        "other":0
+    }
+}</pre>
+                        </p>
+                        <p>
+                        Player is not playing<br/>
+                        <pre>{"result":false,"error":"error.match_doesnt_exists"}</pre>
+                        </p>
+                        <p>
+                        Match does not exist<br/>
+                        <pre>{"result":false,"error":"error.match_started"}</pre>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
                     <td>claim-point</td>
                     <td>PUT</td>
                     <td>/api/v1/claim-match/{matchId}</td>

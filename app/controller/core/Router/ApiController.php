@@ -60,37 +60,46 @@ abstract class ApiController extends Controller
     {
         $tmpFile = realpath(__DIR__ . "/../../..") . "/app/cache/cookie.txt";
 
-        $curl = curl_init('https://api.cloud.appcelerator.com/v1/users/login.json?key=' . ACS_APP_KEY);
-        curl_setopt($curl, CURLOPT_COOKIEJAR, $tmpFile);
-        curl_setopt($curl, CURLOPT_COOKIEFILE, $tmpFile);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, array('login' => ACS_USER, 'password' => ACS_PASSWORD));
-        $void = curl_exec($curl);
+        $channel = 'notifications';
+        $to_ids = is_array($dest) ? implode(',', $dest) : $dest;
 
-        $ch = curl_init('https://api.cloud.appcelerator.com/v1/push_notification/notify.json?key=' . ACS_APP_KEY);
-        curl_setopt($curl, CURLOPT_COOKIEJAR, $tmpFile);
-        curl_setopt($curl, CURLOPT_COOKIEFILE, $tmpFile);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, array(
-                'channel' => 'notifications',
-                'to_ids'  => is_array($dest) ? implode(',', $dest) : $dest,
-                'payload' => json_encode(
-                    array_merge(
-                        array(
-                            'badge' => '+1',
-                            'type'  => $type,
-                            'sound' => 'default',
-                            'icon'  => 'appicon',
-                            'alert' => utf8_encode($msg),
-                        ),
-                        $data
-                    )
+        $json = json_encode(
+            array_merge(
+                array(
+                    'badge' => '+1',
+                    'type'  => $type,
+                    'sound' => 'default',
+                    'icon'  => 'appicon',
+                    'alert' => utf8_encode($msg),
                 ),
+                $data
             )
         );
-        $result = curl_exec($ch);
 
-        curl_close($ch);
+        $curl = curl_init();
+
+        $c_opt = array(
+            CURLOPT_URL            => 'https://api.cloud.appcelerator.com/v1/users/login.json?key=' . ACS_APP_KEY,
+            CURLOPT_COOKIEJAR      => $tmpFile,
+            CURLOPT_COOKIEFILE     => $tmpFile,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => 1,
+            CURLOPT_POSTFIELDS     => "login=" . ACS_USER . "&password=" . ACS_PASSWORD,
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_TIMEOUT        => 60
+        );
+
+        /*** LOGIN **********************************************/
+        curl_setopt_array($curl, $c_opt);
+        $session = curl_exec($curl);
+
+        $c_opt[CURLOPT_URL] = "https://api.cloud.appcelerator.com/v1/push_notification/notify.json?key=" . ACS_APP_KEY;
+        $c_opt[CURLOPT_POSTFIELDS] = "channel={$channel}&to_ids={$to_ids}&payload={$json}";
+        curl_setopt_array($curl, $c_opt);
+        $result = curl_exec($curl);
+        curl_close($curl);
+
+        print_r($result);
     }
 
     /**
