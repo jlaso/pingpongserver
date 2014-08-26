@@ -28,8 +28,8 @@ class Match extends BaseModel
 
 CREATE TABLE IF NOT EXISTS `{$class}` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `player1` varchar(100) DEFAULT NULL,
-  `player2` char(40) DEFAULT NULL,
+  `player1` int(11) DEFAULT NULL,
+  `player2` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `finished_at` datetime DEFAULT NULL,
   `score1` int(11) DEFAULT NULL,

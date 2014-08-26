@@ -15,12 +15,17 @@ abstract class ApiController extends Controller
     const OPPONENT_SCORES = 'opponent.scores';
     const OPPONENT_WINS   = 'opponent.wins';
 
-    const ERROR_PLAYER_DOESNT_EXISTS   = 'error.player_doesnt_exists';
-    const ERROR_MATCH_DOESNT_EXISTS    = 'error.match_doesnt_exists';
-    const ERROR_MATCH_NOT_STARTED      = 'error.match_not_started';
-    const ERROR_PLAYER_NOT_PLAYING     = 'error.player_not_playing';
-    const ERROR_MATCH_STARTED          = 'error.match_started';
-    const ERROR_CLOUD_ID_NOT_SPECIFIED = 'error.cloud_id_not_specified';
+    const ERROR_PLAYER_DOESNT_EXISTS        = 'error.player_doesnt_exists';
+    const ERROR_PLAYER_EMAIL_EXISTS_ALREADY = 'error.player_email_exists_already';
+    const ERROR_PLAYER_NICK_EXISTS_ALREADY  = 'error.player_nick_exists_already';
+    const ERROR_MATCH_DOESNT_EXISTS         = 'error.match_doesnt_exists';
+    const ERROR_MATCH_NOT_STARTED           = 'error.match_not_started';
+    const ERROR_PLAYER_NOT_PLAYING          = 'error.player_not_playing';
+    const ERROR_MATCH_STARTED               = 'error.match_started';
+    const ERROR_CLOUD_ID_NOT_SPECIFIED      = 'error.cloud_id_not_specified';
+    const ERROR_EMAIL_NOT_VALID             = 'error.email_not_valid';
+    const ERROR_NICK_TOO_SHORT              = 'error.nick_too_short';
+    const ERROR_PASSWORD_NOT_STRENGTH       = 'error.password_not_strength';
 
     const NOTIF_MATCH_STARTS = 1;  // An opponent has joined to your match
     const NOTIF_YOU_WIN = 2;
@@ -52,18 +57,40 @@ abstract class ApiController extends Controller
 
 
     /**
+     * @param \Entity\Player $player
+     * @param \Entity\Match $match
+     *
+     * @return array
+     */
+    protected function getScore(\Entity\Player $player, \Entity\Match $match)
+    {
+        $score = array();
+        /** @var \Entity\Player $opponent */
+        if($player->id == $match->player1){
+            $score['you'] = $match->score1 ?: 0;
+            $score['other'] = $match->score2 ?: 0;
+        }else{
+            $score['you'] = $match->score2 ?: 0;
+            $score['other'] = $match->score2 ?: 0;
+        }
+
+        return $score;
+    }
+
+    /**
+     * Send a $type notification to device containing the $data and $msg as alert title
+     *
      * @param int|array $dest
      * @param int $type
      * @param $msg
+     * @param array $data
      */
     protected function sendPushNotification($dest, $type, $msg, $data = array())
     {
         $tmpFile = realpath(__DIR__ . "/../../..") . "/app/cache/cookie.txt";
-
         $channel = 'notifications';
-        $to_ids = is_array($dest) ? implode(',', $dest) : $dest;
-
-        $json = json_encode(
+        $to_ids  = is_array($dest) ? implode(',', $dest) : $dest;
+        $payload = json_encode(
             array_merge(
                 array(
                     'badge' => '+1',
@@ -78,6 +105,7 @@ abstract class ApiController extends Controller
 
         $curl = curl_init();
 
+        // login in ACS system
         $c_opt = array(
             CURLOPT_URL            => 'https://api.cloud.appcelerator.com/v1/users/login.json?key=' . ACS_APP_KEY,
             CURLOPT_COOKIEJAR      => $tmpFile,
@@ -89,18 +117,14 @@ abstract class ApiController extends Controller
             CURLOPT_TIMEOUT        => 60
         );
 
-        /*** LOGIN **********************************************/
         curl_setopt_array($curl, $c_opt);
         $session = curl_exec($curl);
 
-        $c_opt[CURLOPT_URL] = "https://api.cloud.appcelerator.com/v1/push_notification/notify.json?key=" . ACS_APP_KEY;
-        $c_opt[CURLOPT_POSTFIELDS] = "channel={$channel}&to_ids={$to_ids}&payload={$json}";
+        $c_opt[CURLOPT_URL]        = "https://api.cloud.appcelerator.com/v1/push_notification/notify.json?key=" . ACS_APP_KEY;
+        $c_opt[CURLOPT_POSTFIELDS] = "channel={$channel}&to_ids={$to_ids}&payload={$payload}";
         curl_setopt_array($curl, $c_opt);
         $result = curl_exec($curl);
         curl_close($curl);
-
-        //print_r($c_opt);
-        //print_r($result);
     }
 
     /**

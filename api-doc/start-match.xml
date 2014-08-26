@@ -35,4 +35,41 @@
   <option name="isFileUpload" value="false" />
   <option name="textToSend" value="" />
   <option name="filesToSend" value="" />
+</RestClientRequest><RestClientRequest>
+  <option name="httpMethod" value="PUT" />
+  <option name="urlBase" value="http://pingpongserver.dev" />
+  <option name="urlPath" value="/api/v1/start-match" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="API-KEY" />
+        <option name="value" value="kDjE9KfmD2Pd9KmcFkSdFqlK6Mfjz09dKdqS" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="PASSWORD" />
+        <option name="value" value="7110eda4d09e062aa5e4a390b0a572ac0d2c0220" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="PLAYER" />
+        <option name="value" value="player1" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="false" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="" />
+  <option name="filesToSend" value="" />
 </RestClientRequest>

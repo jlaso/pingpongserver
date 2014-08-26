@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "352c1a0556e8f3fa89c7b833f0a711f0",
+    "hash": "27090d752bd44be7b78b44df0f9556dd",
     "packages": [
         {
             "name": "j4mie/idiorm",
@@ -130,12 +130,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jlaso/slim-routing-manager.git",
-                "reference": "5d5112fd8b83917a81486c20682b1795caed9879"
+                "reference": "cc4d8b9699fc985219d1ff838619de1fedec1fcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jlaso/slim-routing-manager/zipball/5d5112fd8b83917a81486c20682b1795caed9879",
-                "reference": "5d5112fd8b83917a81486c20682b1795caed9879",
+                "url": "https://api.github.com/repos/jlaso/slim-routing-manager/zipball/cc4d8b9699fc985219d1ff838619de1fedec1fcc",
+                "reference": "cc4d8b9699fc985219d1ff838619de1fedec1fcc",
                 "shasum": ""
             },
             "require": {
@@ -166,7 +166,104 @@
                 "router",
                 "slimframework"
             ],
-            "time": "2014-08-16 16:28:21"
+            "time": "2014-08-18 19:57:04"
+        },
+        {
+            "name": "psecio/iniscan",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/psecio/iniscan.git",
+                "reference": "1546a195c6b6f0631d0c85417b261f836c7d4ee8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/psecio/iniscan/zipball/1546a195c6b6f0631d0c85417b261f836c7d4ee8",
+                "reference": "1546a195c6b6f0631d0c85417b261f836c7d4ee8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.1",
+                "symfony/console": "~2.1"
+            },
+            "bin": [
+                "bin/iniscan"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Psecio": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Cornutt",
+                    "email": "ccornutt@phpdeveloper.org",
+                    "homepage": "http://www.phpdeveloper.org/"
+                }
+            ],
+            "description": "A scanner to evaluate php.ini security",
+            "homepage": "https://github.com/psecio/iniscan.git",
+            "keywords": [
+                "php.ini",
+                "scanner"
+            ],
+            "time": "2014-06-02 15:27:02"
+        },
+        {
+            "name": "psecio/pwdcheck",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/psecio/pwdcheck.git",
+                "reference": "4c22af3e50c6dcbc4f79b45ccf2b28ea3524a1e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/psecio/pwdcheck/zipball/4c22af3e50c6dcbc4f79b45ccf2b28ea3524a1e2",
+                "reference": "4c22af3e50c6dcbc4f79b45ccf2b28ea3524a1e2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.1",
+                "psecio/iniscan": "*"
+            },
+            "bin": [
+                "bin/pwdcheck"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Psecio": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Cornutt",
+                    "email": "ccornutt@phpdeveloper.org",
+                    "homepage": "http://www.phpdeveloper.org/"
+                }
+            ],
+            "description": "A password complexity validator",
+            "homepage": "https://github.com/psecio/pwdcheck.git",
+            "keywords": [
+                "complexity",
+                "entropy",
+                "password",
+                "validate"
+            ],
+            "support": {
+                "source": "https://github.com/psecio/pwdcheck/tree/master",
+                "issues": "https://github.com/psecio/pwdcheck/issues"
+            },
+            "time": "2014-01-04 13:27:22"
         },
         {
             "name": "slim/extras",
@@ -263,6 +360,58 @@
             "time": "2012-12-13 02:15:50"
         },
         {
+            "name": "swiftmailer/swiftmailer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swiftmailer/swiftmailer.git",
+                "reference": "62478c4c4ed84939a5457b15f9b978b58d0db849"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/62478c4c4ed84939a5457b15f9b978b58d0db849",
+                "reference": "62478c4c4ed84939a5457b15f9b978b58d0db849",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.2-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "lib/swift_required.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Corbyn"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Swiftmailer, free feature-rich PHP mailer",
+            "homepage": "http://swiftmailer.org",
+            "keywords": [
+                "mail",
+                "mailer"
+            ],
+            "time": "2014-07-28 09:34:50"
+        },
+        {
             "name": "symfony/config",
             "version": "v2.2.0",
             "target-dir": "Symfony/Component/Config",
@@ -310,6 +459,63 @@
             "description": "Symfony Config Component",
             "homepage": "http://symfony.com",
             "time": "2013-02-17 12:27:42"
+        },
+        {
+            "name": "symfony/console",
+            "version": "dev-master",
+            "target-dir": "Symfony/Component/Console",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Console.git",
+                "reference": "919345e2757aa3d3aca1d1ce5a8f53f65d1990ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/919345e2757aa3d3aca1d1ce5a8f53f65d1990ef",
+                "reference": "919345e2757aa3d3aca1d1ce5a8f53f65d1990ef",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/event-dispatcher": "~2.1",
+                "symfony/process": "~2.1"
+            },
+            "suggest": {
+                "psr/log": "For using the console logger",
+                "symfony/event-dispatcher": "",
+                "symfony/process": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Console\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony Console Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-08-14 16:37:29"
         },
         {
             "name": "symfony/finder",
@@ -520,9 +726,10 @@
 
     ],
     "minimum-stability": "dev",
-    "stability-flags": [
-
-    ],
+    "stability-flags": {
+        "psecio/pwdcheck": 20,
+        "swiftmailer/swiftmailer": 20
+    },
     "prefer-stable": false,
     "platform": {
         "php": ">=5.3.0"

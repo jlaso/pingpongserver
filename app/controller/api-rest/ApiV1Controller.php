@@ -52,6 +52,67 @@ class ApiV1Controller extends ApiController
     }
 
     /**
+     * @Route('/api/v1/register-user')
+     * @Name('api.v1.register-user')
+     * @Method('POST')
+     */
+    public function registerUserAction()
+    {
+        $this->checkApiKey();
+
+        /** @var \Slim\Http\Request $request */
+        $request = $this->slimInstance->request();
+
+        $email = trim(strtolower($request->post('email')));
+        $nick = trim(strtolower($request->post('nick')));
+        $password = $request->post('password');
+
+        // check if email is an email, etc ... (validate fields)
+        if(! \lib\MyFunctions::check_email($email)){
+            $this->printJsonError(self::ERROR_EMAIL_NOT_VALID);
+        }
+        if(strlen($nick)<5){
+            $this->printJsonError(self::ERROR_NICK_TOO_SHORT);
+        }
+
+        /** @var Player $player */
+        $player = \Entity\Player::factory()->where('nick', $nick)->find_one();
+        //var_dump($player); die;
+        if($player){
+            $this->printJsonError(self::ERROR_PLAYER_EMAIL_EXISTS_ALREADY);
+        }
+        /** @var Player $player */
+        $player = \Entity\Player::factory()->where('email', $email)->find_one();
+        if($player){
+            $this->printJsonError(self::ERROR_PLAYER_EMAIL_EXISTS_ALREADY);
+        }
+        $pwdCheck = new \Psecio\Pwdcheck\Password();
+        $pwdCheck->evaluate($password);
+        if($pwdCheck->getScore()<70){
+            $this->printJsonError(self::ERROR_PASSWORD_NOT_STRENGTH);
+        };
+
+        /** @var Player $player */
+        $player = \Entity\Player::factory()->create();
+        $player->email = $email;
+        $player->nick = $nick;
+        $player->password = sha1($password);
+        $player->save();
+
+        $body = <<<EOD
+        Welcome to <b>PingPongCounter app</b> <br/><br/>
+        Your nick is <b>{$nick}</b><br/>
+        and your password is <b>{$password}</b><br/>
+        <br/>
+        Enjoy the app.<br/><br/>
+        The <b>PingPongCounter app</b> team.<br/>
+EOD;
+        \lib\MyFunctions::sendEmail($email, 'Welcome to PingPongCounter', $body);
+
+        $this->printJsonResponse(array('id'=>$player->id));
+    }
+
+    /**
      * @Route('/api/v1/set-cloud-id')
      * @Name('api.v1.set-cloud-id')
      * @Method('POST')
@@ -235,26 +296,7 @@ class ApiV1Controller extends ApiController
         );
     }
 
-    /**
-     * @param \Entity\Player $player
-     * @param \Entity\Match $match
-     *
-     * @return array
-     */
-    protected function getScore(\Entity\Player $player, \Entity\Match $match)
-    {
-        $score = array();
-        /** @var \Entity\Player $opponent */
-        if($player->id == $match->player1){
-            $score['you'] = $match->score1 ?: 0;
-            $score['other'] = $match->score2 ?: 0;
-        }else{
-            $score['you'] = $match->score2 ?: 0;
-            $score['other'] = $match->score2 ?: 0;
-        }
 
-        return $score;
-    }
 
     /**
      * @Route('/api/v1/claim-point')
