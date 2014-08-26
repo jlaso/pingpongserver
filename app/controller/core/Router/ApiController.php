@@ -71,7 +71,7 @@ abstract class ApiController extends Controller
             $score['other'] = $match->score2 ?: 0;
         }else{
             $score['you'] = $match->score2 ?: 0;
-            $score['other'] = $match->score2 ?: 0;
+            $score['other'] = $match->score1 ?: 0;
         }
 
         return $score;
