@@ -146,7 +146,10 @@ EOD;
         $this->checkApiKey();
         $player = $this->getUserAndCheckPassword();
 
-        $toPoints = $this->slimInstance->request()->get('toPoints') ?: 21;
+        $request   = $this->slimInstance->request();
+        $toPoints  = $request->get('toPoints') ? : 21;
+        $longitude = $request->params("longitude");
+        $latitude  = $request->params("latitude");
 
         /** @var \Entity\Match[] $matches */
         $matches = \Entity\Match::factory()
@@ -166,6 +169,8 @@ EOD;
         $match->player1 = $player->id;
         $match->created_at = date("Y-m-d h:i:s");
         $match->to_points = $toPoints;
+        $match->longitude = $longitude;
+        $match->latitude = $latitude;
         $match->save();
 
         $player->match_id = $match->id;
@@ -183,7 +188,11 @@ EOD;
         $this->checkApiKey();
         $player = $this->getUserAndCheckPassword();
 
-        $criteria = $this->slimInstance->request()->get('criteria');
+        $request   = $this->slimInstance->request();
+        $criteria = $request->get('criteria');
+        $longitude = $request->get("longitude");
+        $latitude  = $request->get("latitude");
+
         $players = array();
         /** @var Player[] $allPlayers */
         $allPlayers = \Entity\Player::factory()
@@ -201,20 +210,30 @@ EOD;
             ->where_null('player2')
             ->where_null('finished_at')
             ->where_in('player1', array_keys($players))
-            ->find_many();
+            ->find_many()
+        ;
 
+        $matchesByDistance = array();
         $playersFound = array();
         if(count($matches)){
             foreach($matches as $match){
-                $result[] = $match->asArray();
+                $result[$match->id] = $match->asArray();
+                $matchesByDistance[$match->id] = \lib\MyFunctions::distance($match->latitude, $match->longitude, $latitude, $longitude);
                 //$players[$match->player1] = $match->player1;
                 $playersFound[$match->player1] = $players[$match->player1];
             }
         }
 
+        // sort by distance
+        $resultSorted = array();
+        asort($matchesByDistance);
+        foreach($matchesByDistance as $id=>$distance){
+            $resultSorted[] = array_merge($result[$id], array('distance'=>$distance));
+        }
+
         $this->printJsonResponse(
             array(
-                'matches' => $result,
+                'matches' => $resultSorted,
                 'players' => $playersFound,
             )
         );
@@ -249,7 +268,13 @@ EOD;
 
             $this->sendPushNotification($opponent->cloud_id, self::NOTIF_MATCH_STARTS, self::PLAYER_JOINED, array('match' => $match->asArray()));
 
-            $this->printJsonResponse(array('match'=>$match->id));
+            $this->printJsonResponse(
+                array(
+                    'match'    => $match->asArray(),
+                    'opponent' => $opponent->asArray(),
+                    'score'    => $this->getScore($player, $match),
+                )
+            );
         }
     }
 

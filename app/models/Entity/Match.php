@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS `{$class}` (
   `score1` int(11) DEFAULT NULL,
   `score2` int(11) DEFAULT NULL,
   `to_points` int(11) DEFAULT 21,
+  `longitude` decimal(10,8) DEFAULT 0,
+  `latitude` decimal(10,8) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE={$options['engine']} AUTO_INCREMENT=1 DEFAULT CHARSET={$options['charset']};
 
@@ -53,6 +55,8 @@ EOD;
             'score1'      => $this->score1 ?: 0,
             'score2'      => $this->score2 ?: 0,
             'to_points'   => $this->to_points ? intval($this->to_points) : 0,
+            'longitude'   => $this->longitude,
+            'latitude'    => $this->latitude,
         );
     }
 

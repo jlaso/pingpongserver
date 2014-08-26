@@ -18,7 +18,7 @@
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="PASSWORD" />
-        <option name="value" value="1234" />
+        <option name="value" value="7110eda4d09e062aa5e4a390b0a572ac0d2c0220" />
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="PLAYER" />
@@ -55,16 +55,25 @@
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="PASSWORD" />
-        <option name="value" value="7110eda4d09e062aa5e4a390b0a572ac0d2c0220" />
+        <option name="value" value="2abd55e001c524cb2cf6300a89ca6366848a77d5" />
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="PLAYER" />
-        <option name="value" value="player1" />
+        <option name="value" value="player2" />
       </KeyValuePair>
     </list>
   </option>
   <option name="parameters">
-    <list />
+    <list>
+      <KeyValuePair>
+        <option name="key" value="longitude" />
+        <option name="value" value="39.10" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="latitude" />
+        <option name="value" value="1.0" />
+      </KeyValuePair>
+    </list>
   </option>
   <option name="parametersEnabled" value="true" />
   <option name="haveTextToSend" value="false" />

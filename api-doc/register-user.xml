@@ -1,7 +1,7 @@
 <RestClientRequest>
-  <option name="httpMethod" value="PUT" />
+  <option name="httpMethod" value="POST" />
   <option name="urlBase" value="http://pingpongserver.dev" />
-  <option name="urlPath" value="/api/v1/start-match" />
+  <option name="urlPath" value="/api/v1/register.user" />
   <option name="headers">
     <list>
       <KeyValuePair>
@@ -16,29 +16,25 @@
         <option name="key" value="API-KEY" />
         <option name="value" value="kDjE9KfmD2Pd9KmcFkSdFqlK6Mfjz09dKdqS" />
       </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="PLAYER" />
-        <option name="value" value="player1" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="PASSWORD" />
-        <option name="value" value="7110eda4d09e062aa5e4a390b0a572ac0d2c0220" />
-      </KeyValuePair>
     </list>
   </option>
   <option name="parameters">
     <list>
       <KeyValuePair>
-        <option name="key" value="toPoints" />
-        <option name="value" value="11" />
+        <option name="key" value="" />
+        <option name="value" value="" />
       </KeyValuePair>
       <KeyValuePair>
-        <option name="key" value="longitude" />
-        <option name="value" value="39.067" />
+        <option name="key" value="email" />
+        <option name="value" value="user1@email.com" />
       </KeyValuePair>
       <KeyValuePair>
-        <option name="key" value="latitude" />
-        <option name="value" value="0.15" />
+        <option name="key" value="password" />
+        <option name="value" value="15%dK4$_" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="nick" />
+        <option name="value" value="user1" />
       </KeyValuePair>
     </list>
   </option>
