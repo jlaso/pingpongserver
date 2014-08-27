@@ -278,6 +278,62 @@ EOD;
         }
     }
 
+    /**
+     * @Route('/api/v1/quit-match')
+     * @Name('api.v1.quit-match')
+     * @Method('PUT')
+     */
+    public function playerQuitMatchAction()
+    {
+        $this->checkApiKey();
+
+        $player = $this->getUserAndCheckPassword();
+        $matchId = $player->match_id;
+        if(!$matchId){
+            $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
+        }
+        /** @var \Entity\Match $match */
+        $match = \Entity\Match::factory()->find_one($matchId);
+        /** @var \Entity\Player $opponent */
+        if($player->id == $match->player1){
+            $opponent = \Entity\Player::factory()->find_one($match->player2);
+        }else{
+            $opponent = \Entity\Player::factory()->find_one($match->player1);
+        }
+
+        switch(true){
+
+            case (!$player):
+                $this->printJsonError(self::ERROR_PLAYER_DOESNT_EXISTS);
+                break;
+
+            case (!$matchId):
+                $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
+                break;
+
+            case (!$match):
+                $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
+                break;
+
+            case (!$match->started()):
+                $this->printJsonError(self::ERROR_MATCH_NOT_STARTED);
+                break;
+
+        }
+        $score = $this->getScore($player, $match);
+        $this->sendPushNotification($opponent->cloud_id, self::NOTIF_OPPONENT_QUITS, self::OPPONENT_QUITS, array('score'=>$score));
+        $match->finished_at = date("Y-m-d h:i:s");
+        $match->save();
+        $player->match_id = 0;
+        $player->save();
+        $this->printJsonResponse(
+            array(
+                'match' => $match->asArray(),
+                'score' => $score,
+            )
+        );
+    }
+
 
     /**
      * @Route('/api/v1/match-info')

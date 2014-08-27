@@ -13,6 +13,7 @@ abstract class ApiController extends Controller
 
     const PLAYER_JOINED   = 'player.joined';
     const OPPONENT_SCORES = 'opponent.scores';
+    const OPPONENT_QUITS = 'opponent.quits';
     const OPPONENT_WINS   = 'opponent.wins';
 
     const ERROR_PLAYER_DOESNT_EXISTS        = 'error.player_doesnt_exists';
@@ -31,6 +32,7 @@ abstract class ApiController extends Controller
     const NOTIF_YOU_WIN = 2;
     const NOTIF_OTHER_WINS = 3;
     const NOTIF_SCORE_UPDATE = 4;
+    const NOTIF_OPPONENT_QUITS = 5;
 
     protected function printJsonResponse($data = array())
     {
