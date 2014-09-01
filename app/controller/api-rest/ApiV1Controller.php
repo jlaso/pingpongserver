@@ -334,6 +334,38 @@ EOD;
         );
     }
 
+    /**
+     * @Route('/api/v1/cancel-match')
+     * @Name('api.v1.cancel-match')
+     * @Method('DELETE')
+     */
+    public function playerCancelMatchAction()
+    {
+        $this->checkApiKey();
+
+        $player = $this->getUserAndCheckPassword();
+        if(!$player){
+            $this->printJsonError(self::ERROR_PLAYER_DOESNT_EXISTS);
+        }
+
+        $matchId = $player->match_id;
+        if(!$matchId){
+            $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
+        }
+        /** @var \Entity\Match $match */
+        $match = \Entity\Match::factory()->find_one($matchId);
+        if(!$match){
+            $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
+        }
+        if($match->started()){
+            $this->printJsonError(self::ERROR_MATCH_STARTED);
+        }
+
+        $match->delete();
+        $player->match_id = 0;
+        $player->save();
+        $this->printJsonResponse();
+    }
 
     /**
      * @Route('/api/v1/match-info')
@@ -425,17 +457,20 @@ EOD;
                 $score = $this->getScore($player, $match);
                 if($match->to_points > $match->score1){
                     $this->sendPushNotification($opponent->cloud_id, self::NOTIF_SCORE_UPDATE, self::OPPONENT_SCORES, array('score'=>$score));
+                    $youWin = false;
                 }else{                    
                     $this->sendPushNotification($opponent->cloud_id, self::NOTIF_OTHER_WINS, self::OPPONENT_WINS, array('score'=>$score));
                     $match->finished_at = date("Y-m-d h:i:s");
                     $player->match_id = 0;
                     $player->save();
+                    $youWin = true;
                 }
                 $match->save();
                 $this->printJsonResponse(
                     array(
-                        'match' => $match->asArray(),
-                        'score' => $score,
+                        'match'  => $match->asArray(),
+                        'score'  => $score,
+                        'youWin' => $youWin,
                     )
                 );
                 break;
@@ -445,17 +480,20 @@ EOD;
                 $score = $this->getScore($player, $match);
                 if($match->to_points > $match->score2){
                     $this->sendPushNotification($opponent->cloud_id, self::NOTIF_SCORE_UPDATE, self::OPPONENT_SCORES, array('score'=>$score));
+                    $youWin = false;
                 }else{
                     $this->sendPushNotification($opponent->cloud_id, self::NOTIF_OTHER_WINS, self::OPPONENT_WINS, array('score'=>$score));
                     $match->finished_at = date("Y-m-d h:i:s");
                     $player->match_id = 0;
                     $player->save();
+                    $youWin = true;
                 }
                 $match->save();
                 $this->printJsonResponse(
                     array(
-                        'match' => $match->asArray(),
-                        'score' => $score,
+                        'match'  => $match->asArray(),
+                        'score'  => $score,
+                        'youWin' => $youWin,
                     )
                 );
                 break;
