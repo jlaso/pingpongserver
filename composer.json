@@ -47,7 +47,9 @@
         "symfony/config":   "2.2.0",
         "symfony/yaml":     "2.1.0",
         "twbs/bootstrap":   "3.2.0",
-        "jlaso/slim-routing-manager": "*"
+        "jlaso/slim-routing-manager": "*",
+        "psecio/pwdcheck": "dev-master",
+        "swiftmailer/swiftmailer": "5.2.*@dev"
     },
     "minimum-stability": "dev",
     "config": {

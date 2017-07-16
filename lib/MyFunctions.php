@@ -177,4 +177,53 @@ class MyFunctions
         return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1_', $str));
     }
 
+    /**
+     * @param array|string $to
+     * @param string $subject
+     * @param string $body
+     */
+    public static function sendEmail($to, $subject, $body)
+    {
+        $transport = \Swift_SmtpTransport::newInstance(MAIL_SERVER, MAIL_PORT)
+            ->setUsername(MAIL_ACCOUNT)
+            ->setPassword(MAIL_PASSWORD)
+        ;
+        $mailer = \Swift_Mailer::newInstance($transport);
+        $message = \Swift_Message::newInstance()
+            ->setSubject($subject)
+            ->setFrom(MAIL_ACCOUNT)
+            ->setTo($to)
+            ->setBody($body)
+        ;
+        $type = $message->getHeaders()->get('Content-Type');
+        $type->setValue('text/html');
+        $type->setParameter('charset', 'utf-8');
+
+        return $mailer->send($message);
+    }
+
+    /**
+     * calculate distante between two coordinates
+     *
+     * @param $latitude1
+     * @param $longitude1
+     * @param $latitude2
+     * @param $longitude2
+     *
+     * @return float
+     */
+    public static function distance($latitude1, $longitude1, $latitude2, $longitude2)
+    {
+        if ((0 === $latitude1 * $latitude2) || (0 === $longitude1 * $longitude2)) {
+            return;
+        }
+        $dLatitude  = ($latitude2 - $latitude1) / 2;
+        $dLongitude = ($longitude2 - $longitude1) / 2;
+        $tmp        = sin(deg2rad($dLatitude)) * sin(deg2rad($dLatitude)) +
+                      cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * sin(deg2rad($dLongitude)) * sin(deg2rad($dLongitude));
+        $aux        = asin(min(1, sqrt($tmp)));
+
+        return round(12745.9728 * $aux, 4);
+    }
+
 }
