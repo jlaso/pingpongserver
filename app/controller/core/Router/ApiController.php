@@ -2,6 +2,7 @@
 
 namespace Router;
 
+use Entity\Notification;
 use JLaso\SlimRoutingManager\Controller\Controller;
 use \Slim\Slim;
 use Entity\Player;
@@ -80,6 +81,27 @@ abstract class ApiController extends Controller
     }
 
     /**
+     * Send a $type notification to player
+     *
+     * @param string $player
+     * @param int $type
+     * @param $msg
+     *
+     * @return Notification
+     */
+    protected function sendInternalNotification($player, $type, $msg)
+    {
+        /** @var Notification $notification */
+        $notification = Notification::factory()->create();
+        $notification->nick = $player;
+        $notification->type = $type;
+        $notification->message = $msg;
+        $notification->save();
+
+        return $notification;
+    }
+
+    /**
      * Send a $type notification to device containing the $data and $msg as alert title
      *
      * @param int|array $dest
@@ -89,6 +111,7 @@ abstract class ApiController extends Controller
      */
     protected function sendPushNotification($dest, $type, $msg, $data = array())
     {
+        /*
         $tmpFile = realpath(__DIR__ . "/../../..") . "/app/cache/cookie.txt";
         $channel = 'notifications';
         $to_ids  = is_array($dest) ? implode(',', $dest) : $dest;
@@ -127,6 +150,7 @@ abstract class ApiController extends Controller
         curl_setopt_array($curl, $c_opt);
         $result = curl_exec($curl);
         curl_close($curl);
+        */
     }
 
     /**

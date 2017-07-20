@@ -1,6 +1,10 @@
 <?php
 
 use Router\ApiController;
+use \Entity\Player;
+use \Entity\Match;
+use \Entity\Notification;
+use \Slim\Http\Request;
 
 class ApiV1Controller extends ApiController
 {
@@ -27,7 +31,7 @@ class ApiV1Controller extends ApiController
         $criteria = $this->slimInstance->request()->get('criteria');
         $players = array();
         /** @var Player[] $allPlayers */
-        $allPlayers = \Entity\Player::factory()->find_many();
+        $allPlayers = Player::factory()->find_many();
 
         foreach($allPlayers as $player){
             if(!$criteria || preg_match("/{$criteria}/", $player->nick)){
@@ -76,13 +80,13 @@ class ApiV1Controller extends ApiController
         }
 
         /** @var Player $player */
-        $player = \Entity\Player::factory()->where('nick', $nick)->find_one();
+        $player = Player::factory()->where('nick', $nick)->find_one();
         //var_dump($player); die;
         if($player){
             $this->printJsonError(self::ERROR_PLAYER_EMAIL_EXISTS_ALREADY);
         }
         /** @var Player $player */
-        $player = \Entity\Player::factory()->where('email', $email)->find_one();
+        $player = Player::factory()->where('email', $email)->find_one();
         if($player){
             $this->printJsonError(self::ERROR_PLAYER_EMAIL_EXISTS_ALREADY);
         }
@@ -93,7 +97,7 @@ class ApiV1Controller extends ApiController
         };
 
         /** @var Player $player */
-        $player = \Entity\Player::factory()->create();
+        $player = Player::factory()->create();
         $player->email = $email;
         $player->nick = $nick;
         $player->password = sha1($password);
@@ -151,8 +155,8 @@ EOD;
         $longitude = $request->params("longitude");
         $latitude  = $request->params("latitude");
 
-        /** @var \Entity\Match[] $matches */
-        $matches = \Entity\Match::factory()
+        /** @var Match[] $matches */
+        $matches = Match::factory()
             ->where('player1', $player->id)
             ->where_null('player2')
             ->where_null('finished_at')
@@ -164,8 +168,8 @@ EOD;
             }
         }
 
-        /** @var \Entity\Match $match */
-        $match = \Entity\Match::factory()->create();
+        /** @var Match $match */
+        $match = Match::factory()->create();
         $match->player1 = $player->id;
         $match->created_at = date("Y-m-d h:i:s");
         $match->to_points = $toPoints;
@@ -195,7 +199,7 @@ EOD;
 
         $players = array();
         /** @var Player[] $allPlayers */
-        $allPlayers = \Entity\Player::factory()
+        $allPlayers = Player::factory()
             ->where_not_equal('id', $player->id)
             ->find_many();
 
@@ -205,8 +209,8 @@ EOD;
             }
         }
         $result = array();
-        /** @var \Entity\Match[] $matches */
-        $matches = \Entity\Match::factory()
+        /** @var Match[] $matches */
+        $matches = Match::factory()
             ->where_null('player2')
             ->where_null('finished_at')
             ->where_in('player1', array_keys($players))
@@ -248,11 +252,11 @@ EOD;
     {
         $this->checkApiKey();
 
-        /** @var \Entity\Match $match */
-        $match = \Entity\Match::factory()->find_one($matchId);
+        /** @var Match $match */
+        $match = Match::factory()->find_one($matchId);
         $player = $this->getUserAndCheckPassword();
-        /** @var \Entity\Player $opponent */
-        $opponent = \Entity\Player::factory()->find_one($match->player1);
+        /** @var Player $opponent */
+        $opponent = Player::factory()->find_one($match->player1);
 
         if(!$match){
             $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
@@ -266,6 +270,7 @@ EOD;
             $player->match_id = $match->id;
             $player->save();
 
+            $this->sendInternalNotification($opponent->nick, self::NOTIF_MATCH_STARTS, array('match' => $match->asArray()));
             $this->sendPushNotification($opponent->cloud_id, self::NOTIF_MATCH_STARTS, self::PLAYER_JOINED, array('match' => $match->asArray()));
 
             $this->printJsonResponse(
@@ -292,13 +297,13 @@ EOD;
         if(!$matchId){
             $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
         }
-        /** @var \Entity\Match $match */
-        $match = \Entity\Match::factory()->find_one($matchId);
-        /** @var \Entity\Player $opponent */
+        /** @var Match $match */
+        $match = Match::factory()->find_one($matchId);
+        /** @var Player $opponent */
         if($player->id == $match->player1){
-            $opponent = \Entity\Player::factory()->find_one($match->player2);
+            $opponent = Player::factory()->find_one($match->player2);
         }else{
-            $opponent = \Entity\Player::factory()->find_one($match->player1);
+            $opponent = Player::factory()->find_one($match->player1);
         }
 
         switch(true){
@@ -352,8 +357,8 @@ EOD;
         if(!$matchId){
             $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
         }
-        /** @var \Entity\Match $match */
-        $match = \Entity\Match::factory()->find_one($matchId);
+        /** @var Match $match */
+        $match = Match::factory()->find_one($matchId);
         if(!$match){
             $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
         }
@@ -381,8 +386,8 @@ EOD;
             $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
         }
 
-        /** @var \Entity\Match $match */
-        $match = \Entity\Match::factory()->find_one($player->match_id);
+        /** @var Match $match */
+        $match = Match::factory()->find_one($player->match_id);
 
         if(!$match){
             $this->printJsonError(self::ERROR_MATCH_DOESNT_EXISTS);
@@ -391,13 +396,13 @@ EOD;
         }
 
         $score = array();
-        /** @var \Entity\Player $opponent */
+        /** @var Player $opponent */
         if($player->id == $match->player1){
-            $opponent = \Entity\Player::factory()->find_one($match->player2);
+            $opponent = Player::factory()->find_one($match->player2);
             $score['you'] = $match->score1 ?: 0;
             $score['other'] = $match->score2 ?: 0;
         }else{
-            $opponent = \Entity\Player::factory()->find_one($match->player1);
+            $opponent = Player::factory()->find_one($match->player1);
             $score['you'] = $match->score2 ?: 0;
             $score['other'] = $match->score2 ?: 0;
         }
@@ -409,7 +414,58 @@ EOD;
         );
     }
 
+     /**
+     * @Route('/api/v1/notification/:nick/:type')
+     * @Name('api.v1.send.notification')
+     * @Method('POST')
+     */
+    public function sendNotification($nick, $type)
+    {
+        $this->checkApiKey();
 
+        /** @var \Slim\Http\Request $request */
+        $request   = $this->slimInstance->request();
+        $message = $request->getBody();
+
+        $notification = $this->sendPushNotification($nick, $type, $message);
+        
+        $this->printJsonResponse(array(
+                'id' => $notification->id,
+            )
+        );
+    }
+
+     /**
+     * @Route('/api/v1/notification/:nick')
+     * @Name('api.v1.get.notification')
+     * @Method('GET')
+     */
+    public function getNotification($nick)
+    {
+        $this->checkApiKey();
+
+        /** @var \Slim\Http\Request $request */
+        $request   = $this->slimInstance->request();
+        $spyMode = ('1' == $request->get('spy'));
+
+        /** @var Notification[] $notifications */
+        $notifications = Notification::factory()->where('nick', $nick)->where('read', 0)->find_many();
+        $result = array();
+
+        foreach ($notifications as $notification){
+            if (!$spyMode) {
+                $notification->read = 1;
+                $notification->save();
+            }
+            $result[] = $notification->asArray();
+        }
+
+        $this->printJsonResponse(array(
+                'count' => count($result),
+                'notifications' => $result,
+            )
+        );
+    }
 
     /**
      * @Route('/api/v1/claim-point')
@@ -425,13 +481,13 @@ EOD;
         if(!$matchId){
             $this->printJsonError(self::ERROR_PLAYER_NOT_PLAYING);
         }
-        /** @var \Entity\Match $match */
-        $match = \Entity\Match::factory()->find_one($matchId);
-        /** @var \Entity\Player $opponent */
+        /** @var Match $match */
+        $match = Match::factory()->find_one($matchId);
+        /** @var Player $opponent */
         if($player->id == $match->player1){
-            $opponent = \Entity\Player::factory()->find_one($match->player2);
+            $opponent = Player::factory()->find_one($match->player2);
         }else{
-            $opponent = \Entity\Player::factory()->find_one($match->player1);
+            $opponent = Player::factory()->find_one($match->player1);
         }
 
         switch(true){

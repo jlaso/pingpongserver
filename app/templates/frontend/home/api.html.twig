@@ -94,6 +94,24 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>notifications</td>
+                    <td>GET</td>
+                    <td>{{ urlApi }}/notifications/player1.json[?spy=1]</td>
+                    <td>headers:<ul><li>API-KEY</li></ul></td>
+                    <td>
+                        <p><pre>
+{
+    "result":true,
+    "count":1,
+    "notifications":[
+        {"id":"6","nick":"player1","message":"the message","read":false}
+    ]
+}</pre></p>
+                        <p>After get the messages they are marked as read except if ?spy=1 received in the URL <br/>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
                     <td>search-match</td>
                     <td>GET</td>
                     <td>/api/v1/search-match[?criteria=xxx]</td>
